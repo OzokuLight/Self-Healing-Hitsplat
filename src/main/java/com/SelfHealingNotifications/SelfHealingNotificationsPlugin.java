@@ -41,19 +41,16 @@ public class SelfHealingNotificationsPlugin extends Plugin {
 	private final int[] lastSkillLevels = new int[Skill.values().length - 1];
 
 
-
 	@Override
 	protected void startUp() throws Exception {
-		Arrays.fill(lastSkillLevels, 100);
+		Arrays.fill(lastSkillLevels, 126);
 	}
-
 
 	@Subscribe
 	public void onStatChanged(StatChanged statChanged) {
 		Player player = client.getLocalPlayer();
 		Skill skill = statChanged.getSkill();
-		boolean sendToChar = SelfHealingNotificationsconfig.sendToChar();
-		boolean ignoreRegen = SelfHealingNotificationsconfig.ignoreRegen();
+		int ignoreRegen = SelfHealingNotificationsconfig.ignoreRegen();
 
 		if (skill != Skill.HITPOINTS) {
 			return;
@@ -66,29 +63,22 @@ public class SelfHealingNotificationsPlugin extends Plugin {
 
 		if (cur > last)
 		{
-			if(dif == 1)
+			if(dif > ignoreRegen)
 			{
-				if(!ignoreRegen)
-				{
-					if (sendToChar)
+					if (this.SelfHealingNotificationsconfig.sendToChar()== SelfHealingNotificationsconfig.sendToChar().Default)
 					{
 						player.setOverheadText("You just healed for " + String.valueOf(dif) + " health.");
 						player.setOverheadCycle(120);
 					}
+					if (this.SelfHealingNotificationsconfig.sendToChar()== SelfHealingNotificationsconfig.sendToChar().Simple)
+					{
+						player.setOverheadText("+" + String.valueOf(dif));
+						player.setOverheadCycle(120);
+					}
 					client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "You just healed for " + String.valueOf(dif) + " health.", null);
-				}
 			}
-			else
-			{
-				if (sendToChar) {
-					player.setOverheadText("You just healed for " + String.valueOf(dif) + " health.");
-					player.setOverheadCycle(120);
-				}
-				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "You just healed for " + String.valueOf(dif) + " health.", null);
-			}
-		}
 
+			}
 		lastSkillLevels[skillIdx] = cur;
-
 	}
 }

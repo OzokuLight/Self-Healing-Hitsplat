@@ -7,22 +7,30 @@ import net.runelite.client.config.ConfigItem;
 @ConfigGroup("SelfHealingNotifications")
 public interface SelfHealingNotificationsConfig extends Config
 {
-	@ConfigItem(
-			keyName = "sendToChar",
-			name = "Display above character",
-			description = "Display healing in above character"
-	)
-	default boolean sendToChar()
+	enum SendToChar
 	{
-		return true;
+		Default,
+		Simple,
+		Off
 	}
 	@ConfigItem(
 			keyName = "ignoreRegen",
-			name = "Ignores 1hp regen or heals",
-			description = "Ignores all healing that is 1hp"
+			name = "Threshold",
+			description = "Ignores all healing that is under submitted value"
 	)
-	default boolean ignoreRegen()
+	default int ignoreRegen()
 	{
-		return true;
+		return 1;
 	}
+
+	@ConfigItem(
+			keyName = "sendToChar",
+			name = "Display",
+			description = "Display healing above character"
+	)
+	default SendToChar sendToChar()
+	{
+		return SendToChar.Default;
+	}
+
 }
